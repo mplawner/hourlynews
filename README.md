@@ -20,3 +20,21 @@ I wrote a script to aggregate the various news feeds every hour and used OpenAI 
 - Then started distributing it on Mastodon...
 
 **I welcome any contributions!**
+
+## Installation
+Install the requirements
+'''pip3 install requirements.txt'''
+
+Configure the config.txt with:
+- OpenAI API from [https://platform.openai.com](https://platform.openai.com)
+- Mastodon API details from your Profile -> Development -> New Application page
+- Telegram API details - see: [https://core.telegram.org/](https://core.telegram.org/)
+- Spreaker API details from your Settings -> Developers -> Create a new application
+ - For your Redirect URL, you can leave it as localhost if you are going to be authenticating from the same machine you're running the script. Otherwise, you'll need an FQDN (apparently it doesn't allow IP addresses)
+
+Run it:
+From within the directory, simply run:
+'''python3 ./main.py'''
+
+If you want it to run on the hour, you can cronjob it, or run the script from within the directory:
+'''sh ./run.sh'''
