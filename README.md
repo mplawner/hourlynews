@@ -6,7 +6,7 @@ This is the script behind the Israel Today: Ongoing War Report by Noa Levi
 - Mastodon: https://babka.social/@noalevi
 - Telegram: https://t.me/ILWarReport
 
-# Why?
+#Why?
 I was trying to keep up with the overwhelming amount of information being published in Telegram channels.
 It was coming fast, and in Hebrew. My phone, my watch, my computer were all buzzing all the time. It was too much!
 I wrote a script to aggreagate the various news feeds every hour, and use OpenAI to write a consoldated report.
@@ -17,3 +17,4 @@ And then, my inner nerd took over and...
 - Then started distributing it on Mastodon...
 
 I welcome any contributions!
+
