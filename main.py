@@ -8,6 +8,7 @@ from tts_converter import text_to_speech
 from telegram_sender import send_to_telegram 
 from podcast_publisher import publish_to_spreaker  
 from mastodon_publisher import post_status_with_audio  
+from headline_generator import generate_headlines
 
 if __name__ == "__main__":
     # Reading RSS URLs from an OPML file
@@ -36,8 +37,12 @@ if __name__ == "__main__":
     # Send the audio and script to the Telegram channel
     send_to_telegram(audio_filename, podcast_script)  # <-- Call the function to send the files to Telegram
 
+    # Generated Headlines
+    headlines = generate_headlines(podcast_script)
+
     # Publish the audio to Spreaker
-    publish_to_spreaker(audio_filename, podcast_script)  # <-- Call the function to publish the audio to Spreaker
+    podcast_description = f"{headlines}\n\n{podcast_script}"
+    publish_to_spreaker(audio_filename, podcast_description)  # <-- Call the function to publish the audio to Spreaker
 
     # Publish to Mastodon
     post_status_with_audio(audio_filename)
