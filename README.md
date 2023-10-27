@@ -24,7 +24,7 @@ I wrote a script to aggregate the various news feeds every hour and used OpenAI 
 ## Installation
 Install the requirements
 
-'''pip3 install requirements.txt'''
+```pip3 install requirements.txt```
 
 Configure the config.txt with:
 - OpenAI API from [https://platform.openai.com](https://platform.openai.com)
@@ -36,8 +36,8 @@ Configure the config.txt with:
 Run it:
 From within the directory, simply run:
 
-'''python3 ./main.py'''
+```python3 ./main.py```
 
 If you want it to run on the hour, you can cronjob it, or run the script from within the directory:
 
-'''sh ./run.sh'''
+```sh ./run.sh```
