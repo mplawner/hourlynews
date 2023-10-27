@@ -45,4 +45,5 @@ if __name__ == "__main__":
     publish_to_spreaker(audio_filename, podcast_description)  # <-- Call the function to publish the audio to Spreaker
 
     # Publish to Mastodon
-    post_status_with_audio(audio_filename)
+    #post_status_with_audio(audio_filename)
+    post_status_with_audio(audio_filename, headlines)
