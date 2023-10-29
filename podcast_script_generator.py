@@ -68,5 +68,10 @@ def generate_podcast_script(news_items):
     # Define the outro
     outro = "That concludes this update of the 'Israel Today: Ongoing War Report'. Stay informed and stay safe. I'm Noa Levi, thank you for listening."
     
-    return f"{intro}\n\n{news_report}\n\n{outro}"
+    #return f"{intro}\n\n{news_report}\n\n{outro}"
+    full_script = f"{intro}\n\n{news_report}\n\n{outro}"
 
+    # Replace "U.S." with "US"
+    full_script = full_script.replace("U.S.", "US")
+
+    return full_script
