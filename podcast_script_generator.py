@@ -1,11 +1,13 @@
 # Responsible for generating the podcast script from the gathered news.
 
+from re import I
 from config_handler import read_openai_key_from_config
 from config_handler import read_system_message_from_config
 from config_handler import read_user_message_from_config
 from datetime import datetime
 import openai
 import pytz  # Make sure you have this library installed
+import json
 
 def get_current_time_ny():
     # Get the current time in New York timezone
@@ -13,6 +15,18 @@ def get_current_time_ny():
     current_time = datetime.now(ny_timezone)
     formatted_time = current_time.strftime('%I:%M %p')
     return formatted_time
+
+def save_response_to_json(response):
+    # Convert the response to a dictionary
+    data = response.to_dict()
+
+    # Create a filename with the current timestamp
+    filename = f"openai_response_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=4)
+
+    print(f"OpenAI response saved to {filename}")
 
 def generate_podcast_script(news_items):
     # Initialize OpenAI API from the config file
@@ -42,13 +56,17 @@ def generate_podcast_script(news_items):
     if 6 <= current_hour < 16: 
         model_name = "gpt-4"
     else:
-        model_name = "gpt-3.5-turbo"
+        #model_name = "gpt-3.5-turbo"
+        model_name = "gpt-3.5-turbo-16k"
 
     # Call OpenAI API
     response = openai.ChatCompletion.create(
         model=model_name,
         messages=[message1, message2]
     )
+
+    # Save the response to a JSON file
+    save_response_to_json(response)
 
     news_report = response.choices[0].message['content'].strip()
     
