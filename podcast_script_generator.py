@@ -25,27 +25,17 @@ def generate_podcast_script(news_items):
     system_message_content = read_system_message_from_config()
     user_message_content = read_user_message_from_config()
 
-
     # Construct a conversation with the model
     message1 = {
         "role": "system",
         "content": system_message_content
-        #"content": "You are a helpful assistant that generates the main body of podcast scripts based on recent news summaries, excluding intros and outros."
-        #"content": "You are a news summarizer, providing concise and objective summaries of current events and important news stories from the ongoing war between Israel and Hamas. Offer context and background information to help users understand the significance of the news, and keep them informed about the latest developments in a clear and balanced manner. The response should not include emojis, markdown language, or abbreviations. "
     }
 
     message2 = {
         "role": "user",
         "content": f"{user_message_content} {combined_news}"
-        #"content": f"Based on the following news from the last half hour, create the main body of a news report without any intros and outros:\n\n{combined_news}"
     }
 
-    # Call OpenAI API
-    #response = openai.ChatCompletion.create(
-    #    model="gpt-3.5-turbo",
-    #    messages=[message1, message2]
-    #)
- 
     current_hour = datetime.now().hour
 
     # Decide the model based on the hour
@@ -66,11 +56,20 @@ def generate_podcast_script(news_items):
     intro = f"The time is now {get_current_time_ny()} in New York, I'm Noa Levi and this is the latest 'Israel Today: Ongoing War Report'."
     
     # Define the outro
-    outro = "That concludes this update of the 'Israel Today: Ongoing War Report'. Stay informed and stay safe. I'm Noa Levi, thank you for listening."
+    outro = (f"That concludes this update of the 'Israel Today: Ongoing War Report'. "
+            f"Thank you for joining us for this hour's update. As events continue to unfold, we're committed to bringing "
+            f"you timely, accurate, and in-depth coverage. Please subscribe and follow us wherever you listen to your podcasts to stay up to date. "
+            f"This news report was generated on a Raspberry Pi 3b using OpenAI's {model_name} model "
+            f"and both Microsoft and Piper text-to-speech engines. Both intro and outro music is used "
+            f"under the Creative Commons 4.0 Attribution license from Code Box and Mansardian, respectively. "
+            f"The code for generating this podcast is available under the MIT license and can be found "
+            f"in Github. See the Podcast description for the link to the repository. "
+            f"As this is an AI-generated report, there may be occasional inaccuracies or errors. We always recommend "
+            f"checking multiple sources to get the most accurate picture of any situation. "
+            f"Stay informed and stay safe. I'm Noa Levi, thank you for listening.")
     
-    #return f"{intro}\n\n{news_report}\n\n{outro}"
     full_script = f"{intro}\n\n{news_report}\n\n{outro}"
-
+    
     # Replace "U.S." with "US"
     full_script = full_script.replace("U.S.", "US")
 
