@@ -74,17 +74,9 @@ def generate_podcast_script(news_items):
     intro = f"The time is now {get_current_time_ny()} in New York, I'm Noa Levi and this is the latest 'Israel Today: Ongoing War Report'."
     
     # Define the outro
-    outro = (f"That concludes this update of the 'Israel Today: Ongoing War Report'. "
-            f"Thank you for joining us for this hour's update. As events continue to unfold, we're committed to bringing "
-            f"you timely, accurate, and in-depth coverage. Please subscribe and follow us wherever you listen to your podcasts to stay up to date. "
-            f"This news report was generated on a Raspberry Pi 3b using OpenAI's {model_name} model "
-            f"and both Microsoft and Piper text-to-speech engines. Both intro and outro music is used "
-            f"under the Creative Commons 4.0 Attribution license from Code Box and Mansardian, respectively. "
-            f"The code for generating this podcast is available under the MIT license and can be found "
-            f"in Github. See the Podcast description for the link to the repository. "
-            f"As this is an AI-generated report, there may be occasional inaccuracies or errors. We always recommend "
-            f"checking multiple sources to get the most accurate picture of any situation. "
-            f"Stay informed and stay safe. I'm Noa Levi, thank you for listening.")
+    outro = (f"Thank you for tuning in to this 'Israel Today: Ongoing War Report' update. Stay safe and informed. I'm Noa Levi. "
+             f"Keep in mind that this AI-generated report may contain occasional inaccuracies, "
+             f"so consult multiple sources for a comprehensive view. Find the code and more details in the podcast description.")
     
     full_script = f"{intro}\n\n{news_report}\n\n{outro}"
     
