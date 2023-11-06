@@ -54,10 +54,12 @@ def generate_podcast_script(news_items):
 
     # Decide the model based on the hour
     if 6 <= current_hour < 16: 
-        model_name = "gpt-4"
+        #model_name = "gpt-4"
+        model_name = "gpt-4-1106-preview"
     else:
         #model_name = "gpt-3.5-turbo"
-        model_name = "gpt-3.5-turbo-16k"
+        #model_name = "gpt-3.5-turbo-16k"
+        model_name = "gpt-3.5-turbo-1106"
 
     # Call OpenAI API
     response = openai.ChatCompletion.create(
