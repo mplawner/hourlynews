@@ -1,12 +1,12 @@
 # Responsible for generating the podcast script from the gathered news.
 
-from re import I
+#from re import I
 from config_handler import read_openai_key_from_config
 from config_handler import read_system_message_from_config
 from config_handler import read_user_message_from_config
 from datetime import datetime
 import openai
-import pytz  # Make sure you have this library installed
+import pytz 
 import json
 
 def get_current_time_ny():
@@ -28,7 +28,9 @@ def save_response_to_json(response):
 
     print(f"OpenAI response saved to {filename}")
 
-def generate_podcast_script(news_items):
+#def generate_podcast_script(news_items):
+def generate_podcast_script(news_items, model_name, temperature, seed):
+
     # Initialize OpenAI API from the config file
     openai.api_key = read_openai_key_from_config()
 
@@ -50,20 +52,22 @@ def generate_podcast_script(news_items):
         "content": f"{user_message_content} {combined_news}"
     }
 
-    current_hour = datetime.now().hour
+    #current_hour = datetime.now().hour
 
     # Decide the model based on the hour
-    if 6 <= current_hour < 16: 
-        #model_name = "gpt-4"
-        model_name = "gpt-4-1106-preview"
-    else:
-        #model_name = "gpt-3.5-turbo"
-        #model_name = "gpt-3.5-turbo-16k"
-        model_name = "gpt-3.5-turbo-1106"
+    #if 6 <= current_hour < 16: 
+    #    #model_name = "gpt-4"
+    #    model_name = "gpt-4-1106-preview"
+    #else:
+    #    #model_name = "gpt-3.5-turbo"
+    #    #model_name = "gpt-3.5-turbo-16k"
+    #    model_name = "gpt-3.5-turbo-1106"
 
     # Call OpenAI API
     response = openai.ChatCompletion.create(
         model=model_name,
+        temperature=temperature,
+        seed=seed,
         messages=[message1, message2]
     )
 

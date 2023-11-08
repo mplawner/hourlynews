@@ -9,8 +9,33 @@ from telegram_sender import send_to_telegram
 from podcast_publisher import publish_to_spreaker  
 from mastodon_publisher import post_status_with_audio  
 from headline_generator import generate_headlines
+from datetime import datetime
+import random
 
 if __name__ == "__main__":
+    current_hour = datetime.now().hour
+    if 6 <= current_hour < 16:
+        model_name = "gpt-4-1106-preview"
+    else:
+        model_name = "gpt-3.5-turbo-1106"
+    
+    # Define temperature and seed
+    temperature = 0.7  # Example temperature
+    
+    # Generate a random 5-digit seed
+    seed = random.randint(10000, 99999)  # 5-digit integer
+
+    # Create the seed file name with the current date and time
+    seed_file_name = f"seed_{datetime.now().strftime('%Y-%m-%d_%H-%M')}.txt"
+
+    # Save the generated seed to a file
+    with open(seed_file_name, 'w') as seed_file:
+        seed_file.write(str(seed))
+    
+    # Make sure the directory for saving seeds exists
+    with open(f"{seed_file_name}", 'w') as seed_file:
+        seed_file.write(str(seed))
+
     # Reading RSS URLs from an OPML file
     rss_urls = extract_rss_urls_from_opml("subscriptions.opml")
 
@@ -18,7 +43,7 @@ if __name__ == "__main__":
     news_items = gather_news_from_rss(rss_urls)
 
     # Generate podcast script
-    podcast_script = generate_podcast_script(news_items[:50])  # Considering top 10 news items for the script
+    podcast_script = generate_podcast_script(news_items[:50], model_name, temperature, seed) 
     print(podcast_script)
 
     # Convert text to speech and get the audio filename
