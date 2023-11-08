@@ -30,14 +30,14 @@ class TelegramSender:
             return response.json()
 
 # The function to be called from main.py
-def send_to_telegram(audio_filename, podcast_script):
+def send_to_telegram(audio_filename, podcast_description):
     TOKEN = config_handler.read_telegram_token_from_config()
     CHANNEL_ID = config_handler.read_telegram_chat_id_from_config()
 
     telegram = TelegramSender(TOKEN, CHANNEL_ID)
 
     # Send the script as a message
-    telegram.send_message(podcast_script)
+    telegram.send_message(podcast_description)
 
     # Send the audio file
     telegram.send_audio(audio_filename, caption="Hourly News Update")
