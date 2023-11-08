@@ -52,21 +52,15 @@ if __name__ == "__main__":
     # Play the generated audio
     # play_audio(audio_filename) 
 
-    # Derive the podcast script filename from the audio filename
-    #script_filename = audio_filename.replace(".mp3", ".txt")
-
-    # Save the script to a file
-    #with open(script_filename, "w") as f:
-    #    f.write(podcast_script)
-
-    # Send the audio and script to the Telegram channel
-    send_to_telegram(audio_filename, podcast_script)  # <-- Call the function to send the files to Telegram
-
     # Generated Headlines
     headlines = generate_headlines(podcast_script, model_name, temperature, seed)
+    podcast_description = f"{headlines}\n\nGPT Model: {model_name} | Temperature: {temperature} | Seed: {seed}\n\n{podcast_script}"
+    #podcast_description = f"{headlines}\n\n{podcast_script}"
+    
+    # Send the audio and script to the Telegram channel
+    send_to_telegram(audio_filename, podcast_description)  # <-- Call the function to send the files to Telegram
 
     # Publish the audio to Spreaker
-    podcast_description = f"{headlines}\n\n{podcast_script}"
     publish_to_spreaker(audio_filename, podcast_description)  # <-- Call the function to publish the audio to Spreaker
 
     # Publish to Mastodon
