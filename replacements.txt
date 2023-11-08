@@ -1,0 +1,13 @@
+U.S.,US
+Sgt.,Sergeant
+Brig.,Brigadier
+Gen.,General
+Lt.,Lieutenant
+Maj.,Major
+Col.,Colonel
+Capt.,Captain
+Cpl.,Corporal
+Spc.,Specialist
+Pfc.,Private First Class
+Pvt.,Private
+Cmdr.,Commander

@@ -28,6 +28,20 @@ def save_response_to_json(response):
 
     print(f"OpenAI response saved to {filename}")
 
+def read_replacements_from_file(filepath):
+    replacements = {}
+    with open(filepath, 'r') as file:
+        for line in file:
+            # Assuming each line contains "term to replace, replacement" format
+            original, replacement = line.strip().split(',')
+            replacements[original] = replacement
+    return replacements
+
+def perform_replacements(text, replacements):
+    for original, replacement in replacements.items():
+        text = text.replace(original, replacement)
+    return text
+
 #def generate_podcast_script(news_items):
 def generate_podcast_script(news_items, model_name, temperature, seed):
 
@@ -51,17 +65,6 @@ def generate_podcast_script(news_items, model_name, temperature, seed):
         "role": "user",
         "content": f"{user_message_content} {combined_news}"
     }
-
-    #current_hour = datetime.now().hour
-
-    # Decide the model based on the hour
-    #if 6 <= current_hour < 16: 
-    #    #model_name = "gpt-4"
-    #    model_name = "gpt-4-1106-preview"
-    #else:
-    #    #model_name = "gpt-3.5-turbo"
-    #    #model_name = "gpt-3.5-turbo-16k"
-    #    model_name = "gpt-3.5-turbo-1106"
 
     # Call OpenAI API
     response = openai.ChatCompletion.create(
@@ -87,6 +90,13 @@ def generate_podcast_script(news_items, model_name, temperature, seed):
     full_script = f"{intro}\n\n{news_report}\n\n{outro}"
     
     # Replace "U.S." with "US"
-    full_script = full_script.replace("U.S.", "US")
+    #full_script = full_script.replace("U.S.", "US")
+ 
+    # Read replacements from file
+    replacements = read_replacements_from_file('replacements.txt')
+    
+    # Perform replacements
+    full_script = perform_replacements(full_script, replacements)
+
 
     return full_script
