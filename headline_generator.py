@@ -1,22 +1,23 @@
 # Responsible for generating the podcast script from the gathered news.
 
 from config_handler import read_openai_key_from_config
-from config_handler import read_system_message_from_config
-from config_handler import read_user_message_from_config
-from datetime import datetime
+# from config_handler import read_system_message_from_config
+# from config_handler import read_user_message_from_config
+# from datetime import datetime
 import openai
-import pytz  # Make sure you have this library installed
+# import pytz  # Make sure you have this library installed
 
-def get_current_time_ny():
-    # Get the current time in New York timezone
-    ny_timezone = pytz.timezone('America/New_York')
-    current_time = datetime.now(ny_timezone)
-    formatted_time = current_time.strftime('%I:%M %p')
-    return formatted_time
+# def get_current_time_ny():
+#     # Get the current time in New York timezone
+#     ny_timezone = pytz.timezone('America/New_York')
+#     current_time = datetime.now(ny_timezone)
+#     formatted_time = current_time.strftime('%I:%M %p')
+#     return formatted_time
 
 def format_to_bulleted_list(headlines):
     # Removing the numbering and converting to bulleted list
-    bulleted_list = ["- " + headline.split('. ', 1)[-1] for headline in headlines]
+    #bulleted_list = ["- " + headline.split('. ', 1)[-1] for headline in headlines]
+    bulleted_list = [headline.split('. ', 1)[-1] for headline in headlines]
     return '\n'.join(bulleted_list)
 
 def generate_headlines(podcast_script, model_name, temperature, seed):
@@ -57,11 +58,11 @@ def generate_headlines(podcast_script, model_name, temperature, seed):
 
     formatted_headlines = format_to_bulleted_list(headlines)
 
-
     #current_hour = datetime.now().hour
 
-    # Add the introduction with the current time in New York
-    intro = f"Headlines from the news at {get_current_time_ny()} in New York."
+    # Add the introduction
+    #intro = f"Headlines\nGPT Model: {model_name} | Temperature: {temperature} | Seed: {seed}"
+    intro = f"Generated with: GPT Model {model_name} | Temperature {temperature} | Seed {seed}\n\nHEADLINES"
 
-    return f"{intro}\n\n{formatted_headlines}"
+    return f"{intro}\n{formatted_headlines}"
 

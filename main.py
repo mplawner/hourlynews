@@ -54,8 +54,8 @@ if __name__ == "__main__":
 
     # Generated Headlines
     headlines = generate_headlines(podcast_script, model_name, temperature, seed)
-    podcast_description = f"{headlines}\n\nGPT Model: {model_name} | Temperature: {temperature} | Seed: {seed}\n\n{podcast_script}"
-    #podcast_description = f"{headlines}\n\n{podcast_script}"
+    #podcast_description = f"{headlines}\n\nGPT Model: {model_name} | Temperature: {temperature} | Seed: {seed}\n\n{podcast_script}"
+    podcast_description = f"{headlines}\n\n{podcast_script}"
     
     # Send the audio and script to the Telegram channel
     send_to_telegram(audio_filename, podcast_description)  # <-- Call the function to send the files to Telegram
