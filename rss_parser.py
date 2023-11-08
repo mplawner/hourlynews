@@ -49,7 +49,8 @@ def clean_data(news_items):
 
     return news_items
 
-def gather_news_from_rss(urls):
+#def gather_news_from_rss(urls):
+def gather_news_from_rss(urls, file_prefix):
     all_news_items = []
     period = datetime.utcnow() - timedelta(minutes=60)
 
@@ -91,11 +92,13 @@ def gather_news_from_rss(urls):
 
     # Save the sorted list of all news items to a file
     current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    save_to_json(all_news_items, f'news_items_{current_datetime}-sorted.json')
+    save_to_json(all_news_items, f'{file_prefix}-news_items-sorted.json') 
+    #save_to_json(all_news_items, f'news_items_{current_datetime}-sorted.json')
 
     # Clean the data
     all_news_items = clean_data(all_news_items)
-    save_to_json(all_news_items, f'news_items_{current_datetime}-sorted-clean.json')
+    save_to_json(all_news_items, f'{file_prefix}-news_items-sorted-clean.json')
+    #save_to_json(all_news_items, f'news_items_{current_datetime}-sorted-clean.json')
 
     # Now, we will select news items until we hit the token limit
     news_items = []
@@ -111,6 +114,7 @@ def gather_news_from_rss(urls):
         token_count = new_token_count
 
     # Save the final list of news items to a file
-    save_to_json(news_items, f'news_items_{current_datetime}-final.json')
+    save_to_json(news_items, f'{file_prefix}-news_items-final.json')
+    #save_to_json(news_items, f'news_items_{current_datetime}-final.json')
 
     return news_items

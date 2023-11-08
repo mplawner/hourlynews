@@ -110,7 +110,7 @@ def add_id3_tags(filename):
     # Save the changes to the file
     audiofile.tag.save()
 
-def text_to_speech(text):
+def text_to_speech(text, file_name_prefix):
     """Converts a given text to speech and returns the audio filename."""
     sentences = split_into_sentences(text)
     
@@ -134,7 +134,8 @@ def text_to_speech(text):
     #final_audio = intro_music + sped_up_audio + outro_music
     final_audio = intro_music + combined_audio + outro_music
     
-    filename_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-hourly.mp3")
+    #filename_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-hourly.mp3")
+    filename_timestamp = f"{file_name_prefix}-audio.mp3"
     final_audio.export(filename_timestamp, format="mp3")
     
     # Add ID3 tags to the mp3

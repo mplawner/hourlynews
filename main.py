@@ -13,51 +13,51 @@ from datetime import datetime
 import random
 
 if __name__ == "__main__":
+    # Filename Prefix for all files associated with this report
+    file_name_prefix = f"{datetime.now().strftime('%Y-%m-%d_%H-%M')}"
+
     current_hour = datetime.now().hour
     if 6 <= current_hour < 16:
         model_name = "gpt-4-1106-preview"
     else:
         model_name = "gpt-3.5-turbo-1106"
-    
-    # Define temperature and seed
-    temperature = 0.7  # Example temperature
-    
-    # Generate a random 5-digit seed
-    seed = random.randint(10000, 99999)  # 5-digit integer
 
-    # Create the seed file name with the current date and time
-    seed_file_name = f"seed_{datetime.now().strftime('%Y-%m-%d_%H-%M')}.txt"
+    # Model Parameters
+    temperature = 0.7  
+    seed = random.randint(10000, 99999)  # 5-digit random integer
+
+    # Save model parameters to a file
+    model_params_file = f"{file_name_prefix}-model_params.txt"
 
     # Save the generated seed to a file
-    with open(seed_file_name, 'w') as seed_file:
-        seed_file.write(str(seed))
-    
-    # Make sure the directory for saving seeds exists
-    with open(f"{seed_file_name}", 'w') as seed_file:
-        seed_file.write(str(seed))
+    with open(model_params_file, 'w') as file:
+        file.write(f"model={model_name}\n")
+        file.write(f"temperature={temperature}\n")
+        file.write(f"seed={seed}\n")
 
     # Reading RSS URLs from an OPML file
     rss_urls = extract_rss_urls_from_opml("subscriptions.opml")
 
     # Gathering news
-    news_items = gather_news_from_rss(rss_urls)
+    #news_items = gather_news_from_rss(rss_urls)
+    news_items = gather_news_from_rss(rss_urls, file_name_prefix)
 
     # Generate podcast script
-    podcast_script = generate_podcast_script(news_items[:50], model_name, temperature, seed) 
+    podcast_script = generate_podcast_script(news_items[:50], model_name, temperature, seed, file_name_prefix) 
     print(podcast_script)
 
     # Convert text to speech and get the audio filename
-    audio_filename = text_to_speech(podcast_script)
+    audio_filename = text_to_speech(podcast_script, file_name_prefix)
 
     # Play the generated audio
-    # play_audio(audio_filename)  <-- Commented out as you had it commented
+    # play_audio(audio_filename) 
 
     # Derive the podcast script filename from the audio filename
-    script_filename = audio_filename.replace(".mp3", ".txt")
+    #script_filename = audio_filename.replace(".mp3", ".txt")
 
     # Save the script to a file
-    with open(script_filename, "w") as f:
-        f.write(podcast_script)
+    #with open(script_filename, "w") as f:
+    #    f.write(podcast_script)
 
     # Send the audio and script to the Telegram channel
     send_to_telegram(audio_filename, podcast_script)  # <-- Call the function to send the files to Telegram
