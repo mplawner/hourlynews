@@ -17,7 +17,7 @@ if __name__ == "__main__":
     file_name_prefix = f"{datetime.now().strftime('%Y-%m-%d_%H-%M')}"
 
     current_hour = datetime.now().hour
-    if 6 <= current_hour < 16:
+    if 6 <= current_hour < 18:
         model_name = "gpt-4-1106-preview"
     else:
         model_name = "gpt-3.5-turbo-1106"
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     send_to_telegram(audio_filename, podcast_script)  # <-- Call the function to send the files to Telegram
 
     # Generated Headlines
-    headlines = generate_headlines(podcast_script)
+    headlines = generate_headlines(podcast_script, model_name, temperature, seed)
 
     # Publish the audio to Spreaker
     podcast_description = f"{headlines}\n\n{podcast_script}"

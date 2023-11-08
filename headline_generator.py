@@ -19,7 +19,7 @@ def format_to_bulleted_list(headlines):
     bulleted_list = ["- " + headline.split('. ', 1)[-1] for headline in headlines]
     return '\n'.join(bulleted_list)
 
-def generate_headlines(podcast_script):
+def generate_headlines(podcast_script, model_name, temperature, seed):
     """
     Generate a bullet list of headlines from a podcast script using gpt-3.5-turbo.
     
@@ -40,13 +40,14 @@ def generate_headlines(podcast_script):
 
     message2 = {
         "role": "user",
-        "content": f"Given the news report: '{podcast_script}', provide a bullet list of headlines:"
+        "content": f"Given the news report: '{podcast_script}', provide a succinct bullet list of headlines:"
     }
 
     # Call OpenAI API
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        #model="gpt-4",
+        model=model_name,
+        temperature=temperature,
+        seed=seed,
         messages=[message1, message2]
     )
 
