@@ -3,7 +3,8 @@ def read_key_from_config(key, filename='config.txt'):
         for line in file:
             if line.startswith(f"{key}="):
                 return line.split('=')[1].strip()
-    raise ValueError(f"{key} not found in config file!")
+    return None  # Changed from raising an error to returning None
+    # raise ValueError(f"{key} not found in config file!")
 
 def read_openai_key_from_config(filename='config.txt'):
     return read_key_from_config("openai", filename)
@@ -43,3 +44,11 @@ def read_mastodon_client_secret_from_config(filename='config.txt'):
 
 def read_mastodon_access_token_from_config(filename='config.txt'):
     return read_key_from_config("mastodon_access_token", filename)
+
+def read_model_param_seed_from_config(filename='config.txt'):
+    seed = read_key_from_config("model_param_seed", filename)
+    return int(seed) if seed and seed.strip() else None
+
+def read_model_param_temp_from_config(filename='config.txt'):
+    temp = read_key_from_config("model_param_temperature", filename)
+    return float(temp) if temp and temp.strip() else None

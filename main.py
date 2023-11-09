@@ -10,6 +10,7 @@ from podcast_publisher import publish_to_spreaker
 from mastodon_publisher import post_status_with_audio  
 from headline_generator import generate_headlines
 from datetime import datetime
+from config_handler import read_model_param_seed_from_config, read_model_param_temp_from_config
 import random
 
 if __name__ == "__main__":
@@ -23,8 +24,9 @@ if __name__ == "__main__":
         model_name = "gpt-3.5-turbo-1106"
 
     # Model Parameters
-    temperature = 0.7  
-    seed = random.randint(10000, 99999)  # 5-digit random integer
+    temperature = read_model_param_temp_from_config() or 0.7  
+    seed = read_model_param_seed_from_config() or random.randint(10000, 99999)  # 5-digit random integer
+
 
     # Save model parameters to a file
     model_params_file = f"{file_name_prefix}-model_params.txt"

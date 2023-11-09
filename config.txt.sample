@@ -1,6 +1,8 @@
 api_id=
 api_hash=
 openai=
+model_param_seed=
+model_param_temperature=
 mastodon_instance_url=
 mastodon_client_id= 
 mastodon_client_secret=
