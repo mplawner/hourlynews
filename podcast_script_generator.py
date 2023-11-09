@@ -76,10 +76,13 @@ def generate_podcast_script(news_items, model_name, temperature, seed, file_pref
         messages=[message1, message2]
     )
 
+    # Save the message to a JSON file
+    messages_to_save = [message1, message2]
+    save_to_json(messages_to_save, f"{file_prefix}-messages.json")
+
     # Save the response to a JSON file
     response_data = response.to_dict()  # Convert the OpenAI response to a dictionary
     save_to_json(response_data, f"{file_prefix}-openai_response.json")
-    #save_response_to_json(response)
 
     news_report = response.choices[0].message['content'].strip()
     
@@ -102,7 +105,5 @@ def generate_podcast_script(news_items, model_name, temperature, seed, file_pref
     script_filename = f"{file_prefix}-podcast_script.txt"
     with open(script_filename, 'w') as f:
         f.write(full_script)
-
-    #print(f"Full script saved to {script_filename}")
 
     return full_script

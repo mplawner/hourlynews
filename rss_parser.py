@@ -1,9 +1,8 @@
 import feedparser
 from datetime import datetime, timedelta
-from config_handler import read_openai_key_from_config
 import tiktoken
-import json  # <-- Importing the JSON module
-import re  # <-- Importing the regular expressions module
+import json
+import re
 
 # Initialize the tokenizer with the appropriate encoding for gpt-4
 enc = tiktoken.encoding_for_model("gpt-4")
@@ -19,6 +18,13 @@ def save_to_json(data, filename):
     """Saves the given data to a JSON file."""
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4, default=str)
+
+def save_sources_to_text(news_items, filename):
+    """Saves the links from the news items to a text file."""
+    with open(filename, 'w', encoding='utf-8') as f:
+        f.write("SOURCES\n")
+        for item in news_items:
+            f.write(item['link'] + "\n")
 
 def clean_data(news_items):
     """Cleans the data of news items by performing various tasks."""
@@ -49,7 +55,6 @@ def clean_data(news_items):
 
     return news_items
 
-#def gather_news_from_rss(urls):
 def gather_news_from_rss(urls, file_prefix):
     all_news_items = []
     period = datetime.utcnow() - timedelta(minutes=60)
@@ -73,32 +78,15 @@ def gather_news_from_rss(urls, file_prefix):
                     "link": entry.link
                 })
 
-    # for url in urls:
-    #     feed = feedparser.parse(url)
-    #     for entry in feed.entries:
-    #         published_date = entry.published_parsed if hasattr(entry, 'published_parsed') else None
-
-    #         # Check if the published date exists and is within the last period
-    #         if published_date and datetime(*published_date[:6]) > period:
-    #             all_news_items.append({
-    #                 "title": entry.title,
-    #                 "summary": entry.summary,
-    #                 "published": published_date,
-    #                 "link": entry.link
-    #             })
-
     # Sorting all news items by published date (most recent first)
     all_news_items.sort(key=lambda x: x["published"], reverse=True)
 
     # Save the sorted list of all news items to a file
-    current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M")
     save_to_json(all_news_items, f'{file_prefix}-news_items-sorted.json') 
-    #save_to_json(all_news_items, f'news_items_{current_datetime}-sorted.json')
 
     # Clean the data
     all_news_items = clean_data(all_news_items)
     save_to_json(all_news_items, f'{file_prefix}-news_items-sorted-clean.json')
-    #save_to_json(all_news_items, f'news_items_{current_datetime}-sorted-clean.json')
 
     # Now, we will select news items until we hit the token limit
     news_items = []
@@ -113,8 +101,10 @@ def gather_news_from_rss(urls, file_prefix):
         news_items.append(item)
         token_count = new_token_count
 
+    # Save the sources to a text file
+    save_sources_to_text(news_items, f'{file_prefix}-sources.txt')
+
     # Save the final list of news items to a file
     save_to_json(news_items, f'{file_prefix}-news_items-final.json')
-    #save_to_json(news_items, f'news_items_{current_datetime}-final.json')
 
     return news_items
