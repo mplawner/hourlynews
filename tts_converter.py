@@ -1,4 +1,6 @@
 import os
+from re import I
+from config_handler import read_openai_key_from_config
 import regex as re
 import requests
 from pydub import AudioSegment
@@ -9,6 +11,7 @@ import subprocess
 from datetime import datetime
 import tempfile
 import eyed3
+import openai
 
 def random_string(length=10):
     """Generate a random string of given length."""
@@ -49,7 +52,9 @@ def fetch_audio_from_edge_tts(sentence):
     try:
         subprocess.run(
             ["edge-tts", "--voice", "en-US-MichelleNeural", "--text", sentence, "--write-media", temp_filename],
-            check=True
+            check=True,
+            stdout=subprocess.DEVNULL,  # Redirects stdout to nowhere
+            stderr=subprocess.DEVNULL  # Optionally, redirects stderr as well
         )
         segment = AudioSegment.from_mp3(temp_filename)
     except Exception as e:
@@ -110,8 +115,49 @@ def add_id3_tags(filename):
     # Save the changes to the file
     audiofile.tag.save()
 
+def transliterate_names(text):
+    """
+    Uses OpenAI's GPT model to transliterate Hebrew and Arabic names and places.
+    """
+    # Initialize OpenAI API from the config file
+    openai.api_key = read_openai_key_from_config()
+
+    # Construct a conversation with the model
+    message1 = {
+        "role": "system",
+        "content": "Your task is to directly replace names and places in a script with their transliterated versions, using Israeli dialect for Hebrew names and Palestinian dialect for Arabic names. Do not add any explanations or additional text."
+    }
+
+    message2 = {
+        "role": "user",
+        "content": f"Here is the script: '{text}'. Identify all Hebrew and Arabic names and places other than commonly known names and places to an English-speaking audience (like Israel or Gaza), and directly replace them with their transliterated versions according to Israeli and Palestinian pronunciations."
+    }
+
+    try:
+        # Call OpenAI API
+        response = openai.ChatCompletion.create(
+            model="gpt-4-1106-preview",
+            #temperature=temperature,
+            #seed=seed,
+            messages=[message1, message2]
+        )
+
+        # Extract the transliterated text from the response
+        # Ensuring that the response is parsed correctly
+        transliterated_text = response.choices[0].message['content'].strip() if response.choices[0].message else text
+
+        print(transliterated_text)
+
+        return transliterated_text
+    except Exception as e:
+        print(f"An error occurred while attempting to transliterate: {e}")
+        return text
+
 def text_to_speech(text, file_name_prefix):
     """Converts a given text to speech and returns the audio filename."""
+
+    #text = transliterate_names(text)  # Transliterate names and places before splitting
+
     sentences = split_into_sentences(text)
     
     combined_audio = None

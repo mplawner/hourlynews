@@ -24,7 +24,7 @@ if __name__ == "__main__":
     file_name_prefix = f"{datetime.now().strftime('%Y-%m-%d_%H-%M')}"
 
     current_hour = datetime.now().hour
-    if 4 <= current_hour < 20:
+    if 5 <= current_hour < 23:
         model_name = "gpt-4-1106-preview"
     else:
         model_name = "gpt-3.5-turbo-1106"
