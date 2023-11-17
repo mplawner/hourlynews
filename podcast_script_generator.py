@@ -34,9 +34,13 @@ def read_replacements_from_file(filepath):
     replacements = {}
     with open(filepath, 'r') as file:
         for line in file:
-            # Assuming each line contains "term to replace, replacement" format
-            original, replacement = line.strip().split(',')
-            replacements[original] = replacement
+            parts = line.strip().split(',')
+            if len(parts) >= 2:
+                # Join back all parts except the first one, allowing for replacements with commas
+                original, replacement = parts[0], ','.join(parts[1:]).strip()
+                replacements[original] = replacement
+            else:
+                print(f"Invalid replacement format in line: {line}")
     return replacements
 
 def perform_replacements(text, replacements):

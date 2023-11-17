@@ -11,4 +11,6 @@ Spc.,Specialist
 Pfc.,Private First Class
 Pvt.,Private
 Cmdr.,Commander
-res.,Reserve
+(res.),(Reserve)
+**, 
+
