@@ -38,6 +38,15 @@ From within the directory, simply run:
 
 ```python3 ./main.py```
 
+## Optional Parameters for main.py
+
+- `--no-mastodon`: Skip publishing to Mastodon.
+- `--no-podcast`: Skip publishing to Spreaker.
+- `--no-telegram`: Skip publishing to Telegram.
+- `--no-publish`: Skip publishing to Mastodon, Spreaker, and Telegram.
+- `--no-audiofile`: Skip creating the TTS audio file.
+- `--news_items {json file}`: Use a specific JSON file for news items instead of fetching from RSS feeds. The file should be in the format of `2023-11-16_11-21-news_items-sorted.json`.
+
 If you want it to run on the hour, you can cronjob it, or run the script from within the directory:
 
 ```sh ./run.sh```
