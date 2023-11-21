@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import tiktoken
 import json
 import re
+import html
 
 # Initialize the tokenizer with the appropriate encoding for gpt-4
 enc = tiktoken.encoding_for_model("gpt-4")
@@ -40,7 +41,7 @@ def clean_data(news_items):
                                u"\U0001FA70-\U0001FAFF"  # Symbols and Pictographs Extended-A
                                u"\U00002702-\U000027B0"  # Dingbats
                                "]+", flags=re.UNICODE)
-    
+
     for item in news_items:
         # Remove the published date
         if "published" in item:
@@ -49,9 +50,21 @@ def clean_data(news_items):
         # Remove emojis from the title
         item["title"] = emoji_pattern.sub(r'', item["title"])
 
+        # Decode HTML entities in the title
+        item["title"] = html.unescape(item["title"])
+
+        # Remove newline and carriage return characters
+        item["title"] = item["title"].replace('\n', ' ').replace('\r', ' ')
+
         # Strip the summary of non-text
         item["summary"] = re.sub(r'<[^>]+>', '', item["summary"])  # Remove HTML tags
         item["summary"] = emoji_pattern.sub(r'', item["summary"])  # Remove emojis
+
+        # Decode HTML entities in the summary
+        item["summary"] = html.unescape(item["summary"])
+
+        # Remove newline and carriage return characters
+        item["summary"] = item["summary"].replace('\n', ' ').replace('\r', ' ')
 
     return news_items
 
