@@ -18,18 +18,6 @@ def get_current_time_ny():
     formatted_time = current_time.strftime('%I:%M %p')
     return formatted_time
 
-# def save_response_to_json(response):
-#     # Convert the response to a dictionary
-#     data = response.to_dict()
-
-#     # Create a filename with the current timestamp
-#     filename = f"openai_response_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    
-#     with open(filename, 'w') as f:
-#         json.dump(data, f, indent=4)
-
-#     print(f"OpenAI response saved to {filename}")
-
 def read_replacements_from_file(filepath):
     replacements = {}
     with open(filepath, 'r') as file:
@@ -69,7 +57,7 @@ def generate_podcast_script(news_items, model_name, temperature, seed, file_pref
 
     message2 = {
         "role": "user",
-        "content": f"{user_message_content} {combined_news}"
+        "content": f"The current time is {get_current_time_ny()}. {user_message_content} {combined_news}"
     }
 
     # Call OpenAI API
