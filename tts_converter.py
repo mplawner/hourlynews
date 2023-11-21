@@ -12,6 +12,7 @@ from datetime import datetime
 import tempfile
 import eyed3
 import openai
+from podcast_script_generator import read_replacements_from_file, perform_replacements
 
 def random_string(length=10):
     """Generate a random string of given length."""
@@ -157,6 +158,8 @@ def text_to_speech(text, file_name_prefix):
     """Converts a given text to speech and returns the audio filename."""
 
     #text = transliterate_names(text)  # Transliterate names and places before splitting
+    pronunciations = read_replacements_from_file('pronounce.txt')
+    text = perform_replacements(text, pronunciations)
 
     sentences = split_into_sentences(text)
     
