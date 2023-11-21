@@ -1,4 +1,5 @@
 U.S.,US
+D.C.,DC
 Sgt.,Sergeant
 Brig.,Brigadier
 Gen.,General
