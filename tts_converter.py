@@ -13,6 +13,7 @@ import tempfile
 import eyed3
 import openai
 from podcast_script_generator import read_replacements_from_file, perform_replacements
+from ad_generator import create_ads
 
 def random_string(length=10):
     """Generate a random string of given length."""
@@ -40,7 +41,7 @@ def fetch_audio_from_piper(sentence):
         
         return AudioSegment.from_wav(temp_wav.name)
 
-def fetch_audio_from_edge_tts(sentence):
+def fetch_audio_from_edge_tts(sentence, voice="en-US-MichelleNeural", rate="+0%"):
     """Fetch audio from Edge TTS."""
     if len(sentence) > 280:  # If the sentence length is over 280 characters, send it to Festival
         #return fetch_audio_from_festival(sentence)
@@ -52,7 +53,7 @@ def fetch_audio_from_edge_tts(sentence):
     
     try:
         subprocess.run(
-            ["edge-tts", "--voice", "en-US-MichelleNeural", "--text", sentence, "--write-media", temp_filename],
+            ["edge-tts", "--voice", voice, "--rate", rate, "--text", sentence, "--write-media", temp_filename],
             check=True,
             stdout=subprocess.DEVNULL,  # Redirects stdout to nowhere
             stderr=subprocess.DEVNULL  # Optionally, redirects stderr as well
@@ -94,10 +95,12 @@ def fetch_audio_from_google(sentence):
     return segment
 
 def split_into_sentences(tts):
-    """Splits the text into sentences using regular expressions."""
-    #return [s.strip() for s in re.split(r'(?<!Mr|Mrs|Dr|Ms|St|Ave|Rd|Blvd|etc|e\.g|i\.e|et al|vs|Prof|Gen|Capt|Lt|Sr|Jr|Ph\.D|M\.D|B\.A|M\.A|D\.D\.S|[\d])[.!?]', tts) if s]
-    return [s.strip() for s in re.split(r'(?<!Mr|Mrs|Dr|Ms|St|Ave|Rd|Blvd|etc|e\.g|i\.e|et al|vs|Prof|Gen|Capt|Lt|Sr|Jr|Ph\.D|M\.D|B\.A|M\.A|D\.D\.S|[\d]|U\.S)[.!?]', tts) if s]
-    #return [s.strip() for s in re.split(r'(?<!Mr|Mrs|Dr|Ms|St|Ave|Rd|Blvd|etc|e\.g|i\.e|et al|vs|Prof|Gen|Capt|Lt|Sr|Jr|Ph\.D|M\.D|B\.A|M\.A|D\.D\.S|[\d]|U\.S)[.!?,]', tts) if s]
+    """Splits the text into sentences while preserving original punctuation."""
+    # Use a regex pattern that splits at [.!?] but keeps the punctuation with the sentence
+    sentences = re.split(r'(?<!Mr|Mrs|Dr|Ms|St|Ave|Rd|Blvd|etc|e\.g|i\.e|et al|vs|Prof|Gen|Capt|Lt|Sr|Jr|Ph\.D|M\.D|B\.A|M\.A|D\.D\.S|[\d]|U\.S)([.!?])', tts)
+    
+    # Reattach the punctuation to the sentences and return non-empty sentences
+    return [sentence + next_punctuation for sentence, next_punctuation in zip(sentences[::2], sentences[1::2]) if sentence.strip()]
 
 def add_id3_tags(filename):
     """Adds ID3 tags to the provided mp3 file."""
@@ -165,8 +168,7 @@ def text_to_speech(text, file_name_prefix):
     
     combined_audio = None
     for sentence in sentences:
-        #segment = fetch_audio_from_google(sentence)
-        segment = fetch_audio_from_edge_tts(sentence)  # Use Edge TTS instead of Google TTS
+        segment = fetch_audio_from_edge_tts(sentence, voice="en-US-MichelleNeural", rate="+0%")
         if combined_audio is None:
             combined_audio = segment
         else:
@@ -179,9 +181,20 @@ def text_to_speech(text, file_name_prefix):
     intro_music = AudioSegment.from_wav("61322__mansardian__news-end-signature-shorter.wav")
     outro_music = AudioSegment.from_wav("460424__jay_you__jingle-news.wav")
 
-    # Combine audio: intro + sped up speech + outro
-    #final_audio = intro_music + sped_up_audio + outro_music
+    # Combine main podcast content
     final_audio = intro_music + combined_audio + outro_music
+
+    # # Generate ad copies and convert them to audio
+    ad_copies = create_ads(file_name_prefix)
+
+    for ad_copy in ad_copies:
+        # Split each ad copy into sentences
+        ad_sentences = split_into_sentences(ad_copy)
+
+        # Convert each sentence in the ad copy to audio and append to final audio
+        for sentence in ad_sentences:
+            ad_audio_segment = fetch_audio_from_edge_tts(sentence, voice="en-GB-LibbyNeural", rate="+15%")
+            final_audio += ad_audio_segment
     
     #filename_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-hourly.mp3")
     filename_timestamp = f"{file_name_prefix}-audio.mp3"
