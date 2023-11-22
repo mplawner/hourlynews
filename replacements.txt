@@ -1,5 +1,8 @@
 U.S.,US
 D.C.,DC
+U.N.,UN
+A.M.,AM
+P.M.,PM
 Sgt.,Sergeant
 Brig.,Brigadier
 Gen.,General
