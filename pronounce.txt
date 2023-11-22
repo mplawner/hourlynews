@@ -38,3 +38,9 @@ Negev,Nehgev
 Yifat,E-faht
 Almog,Ahl-moeg
 Givati,Ghe-vah-tea
+Sha'ar,Shaar
+Doron,Door-own
+Mizrachi,Mizrahi
+Sderot,Sder-oat
+Rosh,Roash
+Hanikra,Ha-nick-rah
