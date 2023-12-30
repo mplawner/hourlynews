@@ -26,7 +26,7 @@ Install the requirements
 
 ```pip3 install requirements.txt```
 
-Configure the config.txt with:
+Configure the config.ini with:
 - OpenAI API from [https://platform.openai.com](https://platform.openai.com)
 - Mastodon API details from your Profile -> Development -> New Application page
 - Telegram API details - see: [https://core.telegram.org/](https://core.telegram.org/)
@@ -46,6 +46,8 @@ From within the directory, simply run:
 - `--no-publish`: Skip publishing to Mastodon, Spreaker, and Telegram.
 - `--no-audiofile`: Skip creating the TTS audio file.
 - `--news_items {json file}`: Use a specific JSON file for news items instead of fetching from RSS feeds.
+- `--config_file {config file}`: Path to the config file (default: config.ini)
+
 
 If you want it to run on the hour, you can cronjob it, or run the script from within the directory:
 
