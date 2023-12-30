@@ -1,5 +1,4 @@
 import requests
-import config_handler
 import logging
 
 logger = logging.getLogger(__name__)
