@@ -10,6 +10,7 @@
 			<outline text="Telegram Channel Stand With Us Breaking News" title="Telegram Channel Stand With Us Breaking News" description="" type="rss" version="RSS" htmlUrl="https://t.me/StandWithUsBreakingNews" xmlUrl="https://rsshub.app/telegram/channel/StandWithUsBreakingNews"/>
 			<outline text="Telegram Channel News Before Everyone" title="Telegram Channel News Before Everyone" description="" type="rss" version="RSS" htmlUrl="https://t.me/hadshotbeforeveryone" xmlUrl="https://rsshub.app/telegram/channel/hadshotbeforeveryone"/>
 			<outline text="Telegram Channel Yediot News" title="Telegram Channel Yediot News" description="" type="rss" version="RSS" htmlUrl="https://t.me/yediotnews" xmlUrl="https://rsshub.app/telegram/channel/yediotnews"/>
+			<outline text="Telegram Channel IDF" title="Telegram Channel IDF" description="" type="rss" version="RSS" htmlUrl="https://t.me/s/idfofficial" xmlUrl="https://rsshub.app/telegram/channel/idfofficial"/>
 			<outline text="Front - Globes" title="Front - Globes" description="" type="rss" version="RSS" htmlUrl="https://en.globes.co.il/en/#utm_source=RSS" xmlUrl="https://en.globes.co.il/WebService/Rss/RssFeeder.asmx/FeederNode?iID=942"/>
 			<outline text="Haaretz latest headlines" title="Haaretz latest headlines" description="" type="rss" version="RSS" htmlUrl="https://www.haaretz.com/israel-news" xmlUrl="https://www.haaretz.com/cmlink/1.4605102"/>
 			<outline text="JPost.com - Homepage" title="JPost.com - Homepage" description="" type="rss" version="RSS" htmlUrl="https://www.jpost.com/" xmlUrl="https://rss.jpost.com/rss/rssfeedsfrontpage.aspx"/>
@@ -18,10 +19,12 @@
 			<outline text="Maariv News Flash" title="Maariv News Flash" description="" type="rss" version="RSS" htmlUrl="https://www.maariv.co.il/" xmlUrl="https://www.maariv.co.il/Rss/RssFeedsMivzakiChadashot"/>
 			<outline text="The Times of Israel" title="The Times of Israel" description="" type="rss" version="RSS" htmlUrl="https://www.timesofisrael.com/" xmlUrl="https://www.timesofisrael.com/feed/"/>
 			<outline text="www.israelhayom.com" title="www.israelhayom.com" description="" type="rss" version="RSS" htmlUrl="https://www.israelhayom.com/" xmlUrl="https://www.israelhayom.com/feed/"/>
+			<outline text="Israel News Agency" title="Israel News Agency" description="" type="rss" version="RSS" htmlUrl="https://israelnewsagency.com/" xmlUrl="https://israelnewsagency.com/feed/"/>
 			<outline text="AP Israel-Hamas war" title="AP Israel-Hamas war" description="" type="rss" version="RSS" htmlUrl="https://apnews.com/hub/israel-hamas-war" xmlUrl="https://rsshub.app/apnews/topics/israel-hamas-war"/>
 			<outline text="Reuters Israel-Hamas war" title="Reuters Israel-Hamas war" description="" type="rss" version="RSS" htmlUrl="https://www.reuters.com/world/israel-hamas/" xmlUrl="https://rsshub.app/reuters/world/israel-hamas"/>
+			<outline text="ynet - Updates for RSS" title="ynet - Updates for RSS" description="" type="rss" version="RSS" htmlUrl="https://www.ynetnews.com/" xmlUrl="https://www.ynet.co.il/Integration/StoryRss3082.xml"/>
 			<outline text="ynet - Updates for RSS" title="ynet - Updates for RSS" description="" type="rss" version="RSS" htmlUrl="https://www.ynet.co.il/" xmlUrl="https://www.ynet.co.il/Integration/StoryRss3254.xml"/>
-
+			<outline text="World Israel News" title="World Israel News" description="" type="rss" version="RSS" htmlUrl="https://worldisraelnews.com/" xmlUrl="https://worldisraelnews.com/feed/"/>
 	</outline>
 	</body>
 </opml>

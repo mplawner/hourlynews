@@ -2,8 +2,7 @@ import requests
 import config_handler
 import logging
 
-# Set up basic logging
-logging.basicConfig(filename='telegram_sender.log', level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
+logger = logging.getLogger(__name__)
 
 class TelegramSender:
     BASE_URL = "https://api.telegram.org"
@@ -15,6 +14,8 @@ class TelegramSender:
         self.url = f"{self.BASE_URL}/bot{self.token}"
 
     def send_message(self, text):
+        link = "https://widget.spreaker.com/player?show_id=5985229&theme=dark&playlist=false&playlist-continuous=false&chapters-image=true&episode_image_position=right&hide-logo=false&hide-likes=false&hide-comments=false&hide-sharing=false&hide-download=true"
+        text = link + "\n\n" + text
         endpoint = f"{self.url}/sendMessage"
         if len(text) > self.MAX_MESSAGE_LENGTH:
             text = text[:self.MAX_MESSAGE_LENGTH]  # Truncate text to fit the limit
@@ -42,14 +43,12 @@ class TelegramSender:
                 logging.error(f"Failed to send audio: {response.text}")
             return response.json()
 
-def send_to_telegram(audio_filename, podcast_description):
-    TOKEN = config_handler.read_telegram_token_from_config()
-    CHANNEL_ID = config_handler.read_telegram_chat_id_from_config()
+def send_to_telegram(podcast_description, token, channel_id):
 
-    telegram = TelegramSender(TOKEN, CHANNEL_ID)
+    telegram = TelegramSender(token, channel_id)
 
     # Send the script as a message
     telegram.send_message(podcast_description)
 
     # Send the audio file
-    telegram.send_audio(audio_filename, caption="Hourly News Update")
+    # telegram.send_audio(audio_filename, caption="Hourly News Update")

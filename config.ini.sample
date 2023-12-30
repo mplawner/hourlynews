@@ -1,0 +1,49 @@
+[OpenAI]
+api_id = 
+api_hash = 
+openai = 
+seed = 
+temperature = 0.7
+day_start = 5
+day_end = 23
+model_night = gpt-3.5-turbo-1106
+model_day = gpt-4-1106-preview
+system_message = 
+user_message = 
+
+[Mastodon]
+instance_url = 
+client_id = 
+client_secret = 
+access_token = 
+hashtags = 
+
+[Telegram]
+token = 
+channel_id = 
+
+[Spreaker]
+client_id = 
+client_secret = 
+show_id = 
+redirect_uri = 
+embedded_url = 
+podcast_url = 
+podcast_apple = 
+podcast_spotify = 
+podcast_google = 
+podcast_amazon = 
+
+[News]
+period = 60
+opml = subscriptions.opml
+show_title = 
+show_description = 
+host = 
+host_voice = en-US-MichelleNeural
+host_tagline = 
+disclaimer = Keep in mind that this AI-generated report may contain occasional inaccuracies, so consult multiple sources for a comprehensive view. Find the code and more details in the podcast description.
+
+[Branding]
+intro_music = 
+outro_music = 

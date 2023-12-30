@@ -4,6 +4,9 @@ import tiktoken
 import json
 import re
 import html
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Initialize the tokenizer with the appropriate encoding for gpt-4
 enc = tiktoken.encoding_for_model("gpt-4")
@@ -68,9 +71,10 @@ def clean_data(news_items):
 
     return news_items
 
-def gather_news_from_rss(urls, file_prefix):
+def gather_news_from_rss(urls, file_prefix, minutes):
+    logger.info(f"Begin gathering news from RSS feeds for the last {minutes} minutes")
     all_news_items = []
-    period = datetime.utcnow() - timedelta(minutes=60)
+    period = datetime.utcnow() - timedelta(minutes)
 
     for url in urls:
         feed = feedparser.parse(url)
@@ -90,16 +94,17 @@ def gather_news_from_rss(urls, file_prefix):
                     "published": published_date,
                     "link": entry.link
                 })
+    logger.info(f"URLs Parsed")
 
     # Sorting all news items by published date (most recent first)
     all_news_items.sort(key=lambda x: x["published"], reverse=True)
-
-    # Save the sorted list of all news items to a file
     save_to_json(all_news_items, f'{file_prefix}-news_items-sorted.json') 
+    logger.info(f"News sorted in reverse order and saved to file")
 
     # Clean the data
     all_news_items = clean_data(all_news_items)
     save_to_json(all_news_items, f'{file_prefix}-news_items-sorted-clean.json')
+    logger.info(f"News items cleaned from non-readable characters and saved to file.")
 
     # Now, we will select news items until we hit the token limit
     news_items = []
@@ -113,11 +118,15 @@ def gather_news_from_rss(urls, file_prefix):
 
         news_items.append(item)
         token_count = new_token_count
+    logging.info(f"Max token count reached: {token_count}")
 
     # Save the sources to a text file
     save_sources_to_text(news_items, f'{file_prefix}-sources.txt')
+    logging.info(f"Sources saved to file")
 
     # Save the final list of news items to a file
     save_to_json(news_items, f'{file_prefix}-news_items-final.json')
+    logging.info(f"Final set of news items saved to file")
 
+    logger.info(f"Complete gathering news from RSS feeds")
     return news_items

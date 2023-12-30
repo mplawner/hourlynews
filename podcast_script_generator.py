@@ -1,15 +1,14 @@
 # Responsible for generating the podcast script from the gathered news.
 
-#from re import I
 from re import I
-from config_handler import read_openai_key_from_config
-from config_handler import read_system_message_from_config
-from config_handler import read_user_message_from_config
+import logging
 from rss_parser import save_to_json
 from datetime import datetime
 import openai
 import pytz 
 import json
+
+logger = logging.getLogger(__name__)
 
 def get_current_time_ny():
     # Get the current time in New York timezone
@@ -28,7 +27,7 @@ def read_replacements_from_file(filepath):
                 original, replacement = parts[0], ','.join(parts[1:]).strip()
                 replacements[original] = replacement
             else:
-                print(f"Invalid replacement format in line: {line}")
+                logger.warning(f"Invalid replacement format in line: {line}")
     return replacements
 
 def perform_replacements(text, replacements):
@@ -37,17 +36,14 @@ def perform_replacements(text, replacements):
     return text
 
 #def generate_podcast_script(news_items):
-def generate_podcast_script(news_items, model_name, temperature, seed, file_prefix):
-
-    # Initialize OpenAI API from the config file
-    openai.api_key = read_openai_key_from_config()
+def generate_podcast_script(news_items, model_name, temperature, seed, 
+                            file_prefix, key, system_message_content, user_message_content,
+                            show_title, host, host_tagline, disclaimer):
+    logger.info("Podcast script generation started")
+    openai.api_key = key
 
     # Combine all news items into a single coherent input
     combined_news = "; ".join([f"{item['title']} {item['summary']}" for item in news_items])
-
-    # Retrieve system and user messages from the config file
-    system_message_content = read_system_message_from_config()
-    user_message_content = read_user_message_from_config()
 
     # Construct a conversation with the model
     message1 = {
@@ -73,18 +69,16 @@ def generate_podcast_script(news_items, model_name, temperature, seed, file_pref
     save_to_json(messages_to_save, f"{file_prefix}-messages.json")
 
     # Save the response to a JSON file
-    response_data = response.to_dict()  # Convert the OpenAI response to a dictionary
+    response_data = response.to_dict() 
     save_to_json(response_data, f"{file_prefix}-openai_response.json")
 
     news_report = response.choices[0].message['content'].strip()
     
     # Add the introduction with the current time in New York
-    intro = f"The time is now {get_current_time_ny()} in New York, I'm Noa Levi and this is the latest 'Israel Today: Ongoing War Report'."
+    intro = f"The time is now {get_current_time_ny()} in New York, I'm {host} and this is the latest {show_title}."
     
     # Define the outro
-    outro = (f"Thank you for tuning in to this 'Israel Today: Ongoing War Report' update. Stay safe and informed. I'm Noa Levi. "
-             f"Keep in mind that this AI-generated report may contain occasional inaccuracies, "
-             f"so consult multiple sources for a comprehensive view. Find the code and more details in the podcast description.")
+    outro = (f"Thank you for tuning in to this {show_title} update.\nI'm {host}. {host_tagline}\n{disclaimer}")
     
     full_script = f"{intro}\n\n{news_report}\n\n{outro}"
     
@@ -98,4 +92,5 @@ def generate_podcast_script(news_items, model_name, temperature, seed, file_pref
     with open(script_filename, 'w') as f:
         f.write(full_script)
 
+    logger.info("Podcast script generation completed")
     return full_script
