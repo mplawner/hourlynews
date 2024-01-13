@@ -16,5 +16,8 @@ Pfc.,Private First Class
 Pvt.,Private
 Cmdr.,Commander
 (res.),(Reserve)
-**, 
-
+*, 
+Israellycool, 
+Walter Cronkite,your host
+L.A., Los Angeles
+Rep., Representative
