@@ -7,6 +7,7 @@ This is the script behind the *Israel Today: Ongoing War Report* by Noa Levi.
 - **Podcast**: [https://www.spreaker.com/show/israel-today-ongoing-war-report](https://www.spreaker.com/show/israel-today-ongoing-war-report)
 - **Mastodon**: [https://babka.social/@noalevi](https://babka.social/@noalevi)
 - **Telegram**: [https://t.me/ILWarReport](https://t.me/ILWarReport)
+- **X (Twitter)**: [https://twitter.com/NoaLevi07102023](https://twitter.com/NoaLevi07102023)
 
 ## Why?
 
@@ -43,7 +44,8 @@ From within the directory, simply run:
 - `--no-mastodon`: Skip publishing to Mastodon.
 - `--no-podcast`: Skip publishing to Spreaker.
 - `--no-telegram`: Skip publishing to Telegram.
-- `--no-publish`: Skip publishing to Mastodon, Spreaker, and Telegram.
+- `--no-twitter`: Skip publishing to Twitter.
+- `--no-publish`: Skip publishing to Mastodon, Spreaker, Twitter, and Telegram.
 - `--no-audiofile`: Skip creating the TTS audio file.
 - `--news_items {json file}`: Use a specific JSON file for news items instead of fetching from RSS feeds.
 - `--config_file {config file}`: Path to the config file (default: config.ini)
