@@ -1,7 +1,9 @@
 import logging
-import tweepy
+#import tweepy
 from datetime import datetime
-#from re import I
+from requests_oauthlib import OAuth1Session
+import os
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -14,23 +16,10 @@ def truncate_text_to_limit(main_text, limit):
         truncated_text = main_text
     return truncated_text
 
-def post_status_with_audio(headlines, 
-                           api_key, api_secret_key, access_token, access_token_secret,
+def post_to_twitter(headlines, 
+                           consumer_key, consumer_secret, access_token, access_token_secret,
                            show_title, hashtags, embedded_url, podcast_url, 
                            podcast_apple, podcast_spotify, podcast_google, podcast_amazon):
-
-    # Authenticate to the Twitter API
-    auth = tweepy.OAuthHandler(api_key, api_secret_key)
-    auth.set_access_token(access_token, access_token_secret)
-    api = tweepy.API(auth)
-
-    # Check if authentication was successful
-    try:
-        api.verify_credentials()
-        logging.info("Authentication to Twitter API successful")
-    except:
-        logging.error("Error during authentication")
-        return
 
     # Prepare the status text
     hour = datetime.now().strftime('%I %p')  # Gets the current hour in 12-hour format with AM/PM
@@ -46,13 +35,29 @@ def post_status_with_audio(headlines,
                              len(podcast_apple) - 23)
 
     logging.info(f"Limiting headline to {headline_limit} characters.")
-
     headline_trunc = truncate_text_to_limit(headlines, headline_limit)   
     
     status_text = f"{headline_trunc}{status_base_text}"
 
-    try:
-        api.update_status(status_text)
-        logging.info("Successfully posted to Twitter")
-    except Exception as e:
-        logging.error(f"Error posting to Twitter: {e}")
+    # Set up OAuth
+    oauth = OAuth1Session(
+        consumer_key,
+        client_secret=consumer_secret,
+        resource_owner_key=access_token,
+        resource_owner_secret=access_token_secret
+    )
+
+    # Making the request
+    payload = {"text": status_text}
+    response = oauth.post(
+        "https://api.twitter.com/2/tweets",
+        json=payload,
+    )
+
+    if response.status_code != 201:
+        logger.error(f"Request returned an error: {response.status_code} {response.text}")
+        return
+
+    logger.info("Successfully posted to Twitter")
+    json_response = response.json()
+    #logger.info("Twitter API Response: %s", json.dumps(json_response, indent=4, sort_keys=True))
