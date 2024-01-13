@@ -11,7 +11,8 @@ logger = logging.getLogger(__name__)
 # Initialize the tokenizer with the appropriate encoding for gpt-4
 enc = tiktoken.encoding_for_model("gpt-4")
 
-MAX_TOKENS = 4000
+#MAX_TOKENS = 4000
+MAX_TOKENS = 8000
 OVERHEAD_TOKENS = 200  # Tokens reserved for other usages (e.g., title formatting, transitions, etc.)
 
 def count_tokens(text):
