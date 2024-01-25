@@ -24,15 +24,19 @@ def post_to_twitter(headlines,
     # Prepare the status text
     hour = datetime.now().strftime('%I %p')  # Gets the current hour in 12-hour format with AM/PM
 
-    status_base_text = (f"\nListen to the {hour} update of {show_title} here: {embedded_url}\n"
-                        f"See show notes for the full transcript and links to sources.\n"
+    # status_base_text = (f"\nListen to the {hour} update of {show_title} here: {embedded_url}\n"
+    #                     f"See show notes for the full transcript and links to sources.\n"
+    #                     f"Listen and Subscribe: {podcast_apple}\n"
+    #                     f"{hashtags}")
+
+    status_base_text = (f"\n{hour} update of {show_title}\n"
                         f"Listen and Subscribe: {podcast_apple}\n"
                         f"{hashtags}")
 
     # URL is fixed at 23 characters
     headline_limit = (280 - len(status_base_text) +
-                             len(embedded_url) - 23 + 
-                             len(podcast_apple) - 23)
+                            #len(embedded_url) - 23 + 
+                            len(podcast_apple) - 23)
 
     logging.info(f"Limiting headline to {headline_limit} characters.")
     headline_trunc = truncate_text_to_limit(headlines, headline_limit)   
