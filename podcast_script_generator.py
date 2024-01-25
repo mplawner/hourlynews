@@ -43,7 +43,8 @@ def generate_podcast_script(news_items, model_name, temperature, seed,
     openai.api_key = key
 
     # Combine all news items into a single coherent input
-    combined_news = "; ".join([f"{item['title']} {item['summary']}" for item in news_items])
+    #combined_news = "; ".join([f"{item['title']} {item['summary']}" for item in news_items])
+    combined_news = "; ".join([f"{item['summary']} " for item in news_items])
 
     # Construct a conversation with the model
     message1 = {

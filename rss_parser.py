@@ -1,18 +1,24 @@
 import feedparser
+import pytz 
 from datetime import datetime, timedelta
 import tiktoken
 import json
 import re
 import html
 import logging
+from bs4 import BeautifulSoup
+import time
+import requests
+from requests.exceptions import HTTPError
+
 
 logger = logging.getLogger(__name__)
 
 # Initialize the tokenizer with the appropriate encoding for gpt-4
 enc = tiktoken.encoding_for_model("gpt-4")
 
-#MAX_TOKENS = 4000
-MAX_TOKENS = 8000
+#MAX_TOKENS = 8000
+MAX_TOKENS = 12000
 OVERHEAD_TOKENS = 200  # Tokens reserved for other usages (e.g., title formatting, transitions, etc.)
 
 def count_tokens(text):
@@ -30,6 +36,56 @@ def save_sources_to_text(news_items, filename):
         f.write("SOURCES\n")
         for item in news_items:
             f.write(item['link'] + "\n")
+
+def get_full_article(link):
+    """Fetches and returns the full article content from the given link."""
+    retries = 0
+    max_retries=2
+    wait_secs=15 
+    while retries < max_retries:
+        try:
+            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+            response = requests.get(link, headers=headers)
+            response.raise_for_status()  # Ensure we notice bad responses
+            soup = BeautifulSoup(response.content, 'html.parser')
+            # This assumes that the main content of the article is within a <p> tag
+            # You might need to adjust this based on the structure of your target webpages
+            # More Generic Implementation:
+            article_text = ' '.join(p.get_text() for p in soup.find_all('p'))
+            if not article_text.strip():
+                # If article_text is empty after stripping whitespace
+                logger.error(f"Failed to parse the article content: {link}")
+                return ''  # Return empty article
+
+            logger.debug(f"Article content fetched: {link}")
+            return article_text
+            # More Specific Implementation:
+            # article_body = soup.find('article') or soup.find('div', class_='post-content')
+            # if article_body:
+            #     article_text = article_body.get_text(strip=True, separator=' ')
+            #     logger.debug(f"Article content fetched: {link}")
+            # else:
+            #     logger.error(f"Failed to parse the article content: {link}")
+            #     article_text = '' # Return empty article
+            # return article_text
+
+        except HTTPError as e:
+            if e.response.status_code == 429:
+                # If it's a rate limit error, wait and then retry
+                wait_time = int(e.response.headers.get('Retry-After', wait_secs))
+                logger.warning(f"429 Client Error: Too Many Requests. Retrying after {wait_time} seconds.")
+                time.sleep(wait_time)
+                retries += 1
+                continue
+            else:
+                logger.error(f"HTTP error occurred: {e}")
+                return ""        
+        except Exception as e:
+            logger.error(f"Other error occurred: {e}")
+            return ""
+
+    logger.error("Max retries reached. Returning empty article.")
+    return ""
 
 def clean_data(news_items):
     """Cleans the data of news items by performing various tasks."""
@@ -75,23 +131,46 @@ def clean_data(news_items):
 def gather_news_from_rss(urls, file_prefix, minutes):
     logger.info(f"Begin gathering news from RSS feeds for the last {minutes} minutes")
     all_news_items = []
-    period = datetime.utcnow() - timedelta(minutes)
+    #period = datetime.utcnow() - timedelta(minutes)
+    period = datetime.utcnow().replace(tzinfo=pytz.utc) - timedelta(minutes=minutes)
+    logger.debug(f"Period: {period}")
 
     for url in urls:
         feed = feedparser.parse(url)
         for entry in feed.entries:
-            # First, try getting the date from 'updated_parsed' (corresponding to <pubDate>)
-            published_date = entry.updated_parsed if hasattr(entry, 'updated_parsed') else None
+            # Skip entries with titles starting with "WATCH:"
+            if entry.title.startswith("WATCH:"):
+                continue
 
-            # If not found, then fallback to 'published_parsed'
-            if not published_date:
-                published_date = entry.published_parsed if hasattr(entry, 'published_parsed') else None
+            published_date = None
+            if hasattr(entry, 'updated_parsed'):
+                published_date = datetime(*entry.updated_parsed[:6]).replace(tzinfo=pytz.utc)
+            elif hasattr(entry, 'published_parsed'):
+                published_date = datetime(*entry.published_parsed[:6]).replace(tzinfo=pytz.utc)
 
-            # Check if the published date exists and is within the last period
-            if published_date and datetime(*published_date[:6]) > period:
+            logger.debug(f"Published Date: {published_date}")
+
+            if published_date and published_date > period:            
+                full_article = get_full_article(entry.link)  # Fetch the full article
+
+                # Skip the entry if full_article is blank
+                # if not full_article.strip():
+                #     continue
+                # all_news_items.append({
+                #     "title": entry.title,
+                #     "summary": entry.summary,
+                #     "article": full_article,
+                #     "published": published_date,
+                #     "link": entry.link
+                # })
+
+                # If the article comes back blank, use the title and summary only
+                article_content = full_article if full_article.strip() else f"{entry.title}\n{entry.summary}"
+
                 all_news_items.append({
                     "title": entry.title,
                     "summary": entry.summary,
+                    "article": article_content,
                     "published": published_date,
                     "link": entry.link
                 })
@@ -111,14 +190,25 @@ def gather_news_from_rss(urls, file_prefix, minutes):
     news_items = []
     token_count = 0
     for item in all_news_items:
-        new_token_count = token_count + count_tokens(item['title'] + "\n" + item['summary'])
-                
-        # Stop adding news items if we're nearing the token limit
-        if new_token_count + OVERHEAD_TOKENS > MAX_TOKENS:
-            break
+        item_token_count = count_tokens(item['article'])
 
-        news_items.append(item)
-        token_count = new_token_count
+        # Check if adding this item would exceed the token limit
+        if token_count + item_token_count + OVERHEAD_TOKENS <= MAX_TOKENS:
+            news_items.append(item)
+            token_count += item_token_count
+        # If the item would exceed the limit, skip it and check the next item
+        else:
+            continue
+
+        # #new_token_count = token_count + count_tokens(item['title'] + "\n" + item['summary'])
+        # new_token_count = token_count + count_tokens(item['article'])
+                
+        # # Stop adding news items if we're nearing the token limit
+        # if new_token_count + OVERHEAD_TOKENS > MAX_TOKENS:
+        #     break
+
+        # news_items.append(item)
+        # token_count = new_token_count
     logging.info(f"Max token count reached: {token_count}")
 
     # Save the sources to a text file
